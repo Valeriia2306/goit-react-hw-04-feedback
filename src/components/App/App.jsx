@@ -5,7 +5,6 @@ import { FeedbackOptions } from 'components/FeedbackOptions/FeedbackOptions';
 import { Statistics } from 'components/Statistics/Statistics';
 import { Notification } from 'components/Notification/Notification';
 
-// Use hookies
 function App() {
   const [good, setCounterGood] = useState(0);
   const [neutral, setCounterNeutral] = useState(0);
