@@ -1,60 +1,64 @@
-import React from 'react';
+import { useState } from 'react';
 
 import { Container } from './App.styled';
 import { FeedbackOptions } from 'components/FeedbackOptions/FeedbackOptions';
 import { Statistics } from 'components/Statistics/Statistics';
 import { Notification } from 'components/Notification/Notification';
 
-class App extends React.Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
+function App() {
+  const [good, setCounterGood] = useState(0);
+  const [neutral, setCounterNeutral] = useState(0);
+  const [bad, setCounterBad] = useState(0);
+
+  const handleCounter = e => {
+    const key = e.currentTarget.textContent;
+
+    switch (key) {
+      case 'good':
+        setCounterGood(state => state + 1);
+        break;
+      case 'neutral':
+        setCounterNeutral(state => state + 1);
+        break;
+      case 'bad':
+        setCounterBad(state => state + 1);
+        break;
+      default:
+        break;
+    }
   };
 
-  handleCounter = key => {
-    this.setState(prevState => ({ [key]: (prevState[key] += 1) }));
+  const feedbackList = ['good', 'neutral', 'bad'];
+
+  const totalFeedback = () => {
+    return good + neutral + bad;
   };
 
-  countTotalFeedback = () => {
-    return Object.values(this.state).reduce((acc, value) => acc + value, 0);
-  };
-
-  countPositiveFeedbackPercentage = () => {
-    const { good, neutral } = this.state;
-    const totalFeedback = this.countTotalFeedback();
-
+  const countPositiveFeedbackPercentage = () => {
+    const total = totalFeedback();
     if (good === 0) {
-      return Math.round((neutral / totalFeedback) * 50);
+      return Math.round((neutral / total) * 50);
     }
 
-    return Math.round((good / totalFeedback) * 100);
+    return Math.round((good / total) * 100);
   };
 
-  render() {
-    const statisticsList = Object.keys(this.state);
-    const percentage = this.countPositiveFeedbackPercentage();
-    const totalFeedback = this.countTotalFeedback();
-    return (
-      <Container>
-        <FeedbackOptions
-          options={statisticsList}
-          onClickFeedback={this.handleCounter}
-        />
-        {totalFeedback !== 0 ? (
-          <Statistics
-            good={this.state.good}
-            neutral={this.state.neutral}
-            bad={this.state.bad}
-            total={totalFeedback}
-            positivePercentage={percentage}
-          ></Statistics>
-        ) : (
-          <Notification message="There is no feedback" />
-        )}
-      </Container>
-    );
-  }
+  return (
+    <Container>
+      <FeedbackOptions options={feedbackList} onClickFeedback={handleCounter} />
+      {totalFeedback() > 0 ? (
+        <Statistics
+          good={good}
+          neutral={neutral}
+          bad={bad}
+          total={good + neutral + bad}
+          positivePercentage={countPositiveFeedbackPercentage()}
+        ></Statistics>
+      ) : (
+        <Notification message="There is no feedback" />
+      )}
+    </Container>
+  );
 }
 
 export { App };
